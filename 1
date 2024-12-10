@@ -1,0 +1,154 @@
+#include <iostream>
+#include <cstring> // for string comparison
+using namespace std;
+
+// Define the structure to store student details
+struct Student {
+    int rollNo;          // Roll number of the student
+    char name[20];       // Name of the student
+    float sgpa;          // SGPA of the student
+};
+
+// Function Prototypes
+void accept(Student list[], int size);
+void display(Student list[], int size);
+void bubbleSort(Student list[], int size);
+void insertionSort(Student list[], int size);
+void searchBySGPA(Student list[], int size);
+void binarySearchByName(Student list[], int size);
+
+int main() {
+    const int size = 15;         // Total number of students
+    Student students[size];      // Array to hold student records
+    int choice;                  // Variable to store user's menu choice
+
+    // Accept student data
+    accept(students, size);
+
+    do {
+        // Display the menu
+        cout << "\nMenu:\n"
+             << "1. Bubble Sort by Roll Number\n"
+             << "2. Insertion Sort by Name\n"
+             << "3. Search by SGPA\n"
+             << "4. Binary Search by Name\n"
+             << "5. Exit\n"
+             << "Enter your choice: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                bubbleSort(students, size);  // Sort by roll number
+                display(students, size);    // Display sorted list
+                break;
+
+            case 2:
+                insertionSort(students, size);  // Sort by name
+                display(students, size);        // Display sorted list
+                break;
+
+            case 3:
+                searchBySGPA(students, size);   // Search by SGPA
+                break;
+
+            case 4:
+                binarySearchByName(students, size); // Search by name
+                break;
+
+            case 5:
+                cout << "Exiting program.\n";
+                break;
+
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+    } while (choice != 5);
+
+    return 0;
+}
+
+// Accept student details
+void accept(Student list[], int size) {
+    for (int i = 0; i < size; i++) {
+        cout << "Enter Roll Number, Name, and SGPA for Student " << i + 1 << ": ";
+        cin >> list[i].rollNo >> list[i].name >> list[i].sgpa;
+    }
+}
+
+// Display student details
+void display(Student list[], int size) {
+    cout << "\nRoll No\tName\t\tSGPA\n";
+    for (int i = 0; i < size; i++) {
+        cout << list[i].rollNo << "\t" << list[i].name << "\t\t" << list[i].sgpa << endl;
+    }
+}
+
+// Bubble sort to sort students by roll number
+void bubbleSort(Student list[], int size) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - 1 - i; j++) {
+            if (list[j].rollNo > list[j + 1].rollNo) {
+                swap(list[j], list[j + 1]);
+            }
+        }
+    }
+}
+
+// Insertion sort to sort students by name
+void insertionSort(Student list[], int size) {
+    for (int i = 1; i < size; i++) {
+        Student temp = list[i];
+        int j = i - 1;
+        while (j >= 0 && strcmp(list[j].name, temp.name) > 0) {
+            list[j + 1] = list[j];
+            j--;
+        }
+        list[j + 1] = temp;
+    }
+}
+
+// Search for students by SGPA
+void searchBySGPA(Student list[], int size) {
+    float targetSGPA;
+    cout << "Enter SGPA to search: ";
+    cin >> targetSGPA;
+
+    bool found = false;
+    for (int i = 0; i < size; i++) {
+        if (list[i].sgpa == targetSGPA) {
+            cout << list[i].rollNo << "\t" << list[i].name << "\t" << list[i].sgpa << endl;
+            found = true;
+        }
+    }
+
+    if (!found) {
+        cout << "No students found with SGPA " << targetSGPA << ".\n";
+    }
+}
+
+// Binary search for students by name
+void binarySearchByName(Student list[], int size) {
+    char targetName[20];
+    cout << "Enter name to search: ";
+    cin >> targetName;
+
+    insertionSort(list, size); // Sort array for binary search
+
+    int left = 0, right = size - 1;
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        int cmp = strcmp(list[mid].name, targetName);
+
+        if (cmp == 0) {
+            cout << "Student Found:\n";
+            cout << list[mid].rollNo << "\t" << list[mid].name << "\t" << list[mid].sgpa << endl;
+            return;
+        } else if (cmp < 0) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+
+    cout << "No student found with the name " << targetName << ".\n";
+}
